@@ -317,18 +317,14 @@ func (g *Gui) handleEvent(ev *termbox.Event) error {
 	}
 }
 
-func (g *Gui) Redraw() error {
+func (g *Gui) Sync() error {
+	termbox.Sync()
 	for _, v := range g.views {
 		v.tainted = true
 	}
-	x, y := termbox.Size()
-	for i := 0; i < x; i++ {
-		for j := 0; j < y; j++ {
-			termbox.SetCell(i, j, ' ', termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
-		}
-	}
-
-	return g.flush()
+	err := g.flush()
+	termbox.Sync()
+	return err
 }
 
 // flush updates the gui, re-drawing frames and buffers.
