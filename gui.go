@@ -317,6 +317,20 @@ func (g *Gui) handleEvent(ev *termbox.Event) error {
 	}
 }
 
+func (g *Gui) Redraw() error {
+	for _, v := range g.views {
+		v.tainted = true
+	}
+	x, y := termbox.Size()
+	for i := 0; i < x; i++ {
+		for j := 0; j < y; j++ {
+			termbox.SetCell(i, j, ' ', termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
+		}
+	}
+
+	return g.flush()
+}
+
 // flush updates the gui, re-drawing frames and buffers.
 func (g *Gui) flush() error {
 	if g.layout == nil {
